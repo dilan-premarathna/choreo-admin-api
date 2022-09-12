@@ -1,0 +1,14 @@
+[package]
+distribution = "2201.0.3"
+name = "choreo_admin_api"
+org = "choreo"
+version = "0.1.0"
+
+[build-options]
+observabilityIncluded = true
+
+[[platform.java11.dependency]]
+artifactId = "mssql-jdbc"
+groupId = "com.microsoft.sqlserver"
+modules = ["db"]
+version = "9.2.1.jre11"

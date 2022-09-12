@@ -1,0 +1,23 @@
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ballerina 
+choreo-admin-api/target
+choreo-admin-api/.ballerina
+.ballerina
+
+# vs code
+.vscode
+
+# Configuration files (Config.toml, Dev-Config.toml)
+*Config.toml
+
+#MacOS config
+**/.DS_Store
+
