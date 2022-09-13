@@ -25,7 +25,7 @@ public isolated function getOrgSubsctiptionDetails(string orgID) returns json|er
         paidCustomer: subscriptionDBRecord.is_paid,
         status: subscriptionDBRecord.status,
         stepQuota: subscriptionDBRecord.step_quota,
-        TierName: subscriptionDBRecord.name
+        tierName: subscriptionDBRecord.name
     };
     return subscription.toJson();
 }
@@ -33,11 +33,6 @@ public isolated function getOrgSubsctiptionDetails(string orgID) returns json|er
 public isolated function updateTier(string orgID, UpdateSubscripionTier subscription) returns int|error {
     int isPaid = 1;
 
-    string[] choreoSubPlan = ["Free", "Pay As You Go", "Enterprise"];
-
-    if choreoSubPlan.indexOf(subscription.tierName) == () {
-        return error("Invalid Tier");
-    }
     if subscription.tierName == "Free" {
         isPaid = 0;
     }

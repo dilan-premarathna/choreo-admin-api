@@ -10,11 +10,14 @@ import ballerina/sql;
 string uuidMock = "3ac78213-9cd9-b96a-d98cbb16d4cc";
 string handleMock = "choreotestorg";
 string billingDateMock = "2021-07-30T10:09:57Z";
+string billingDateTimestampMock = "1627639797657";
 string createdAtMock = "2022-04-29T06:30:00Z";
+string createdAtTimestampMock = "1651213800794";
 string isPaidMock = "true";
 string statusMock = "ACTIVE";
 string stepQuotaMock = "1000000";
 string tierNameMock = "Enterprise";
+string tierIdMock = "3ac78213-9cd9-b96a-d98cbb16d4cc";
 
 public Subscription mockSubscription = {
     organization: {
@@ -26,33 +29,33 @@ public Subscription mockSubscription = {
     paidCustomer: isPaidMock,
     status: statusMock,
     stepQuota: stepQuotaMock,
-    TierName: tierNameMock
+    tierName: tierNameMock
 };
 
 SubscriptionDBRecord subscriptionDAOStream = {
-    org_id: "3ac78213-9cd9-b96a-d98cbb16d4cc",
-    org_handle: "choreotestorg",
-    billing_date: "1627639797657",
-    status: "ACTIVE",
-    is_paid: "true",
-    step_quota: "1000000",
-    created_at: "1651213800794",
-    name: "Enterprise",
-    tier_id: "3ac78213-9cd9-b96a-d98cbb16d4cc"
+    org_id: uuidMock,
+    org_handle: handleMock,
+    billing_date: billingDateTimestampMock,
+    status: statusMock,
+    is_paid: isPaidMock,
+    step_quota: stepQuotaMock,
+    created_at: createdAtTimestampMock,
+    name: tierNameMock,
+    tier_id: tierIdMock
 };
 
 function mockedSubscriptionDAO() returns SubscriptionDBRecord {
 
     SubscriptionDBRecord subscriptionDAOStream = {
-        org_id: "3ac78213-9cd9-b96a-d98cbb16d4cc",
-        org_handle: "choreotestorg",
-        billing_date: "1627639797657",
-        status: "ACTIVE",
-        is_paid: "true",
-        step_quota: "1000000",
-        created_at: "1651213800794",
-        name: "Enterprise",
-        tier_id: "3ac78213-9cd9-b96a-d98cbb16d4cc"
+        org_id: uuidMock,
+        org_handle: handleMock,
+        billing_date: billingDateTimestampMock,
+        status: statusMock,
+        is_paid: isPaidMock,
+        step_quota: stepQuotaMock,
+        created_at: createdAtTimestampMock,
+        name: tierNameMock,
+        tier_id: tierIdMock
     };
     return subscriptionDAOStream;
 }

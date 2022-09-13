@@ -23,10 +23,16 @@ public type Subscription record {
     string paidCustomer = "";
     string status = "";
     string stepQuota = "";
-    string TierName = "";
+    string tierName = "";
 };
 
 public type UpdateSubscripionTier record {
     string stepQuota;
-    string tierName;
+    Plan tierName;
 };
+
+public enum Plan {
+    Free,
+    Pay\ As\ You\ Go,
+    Enterprise
+}

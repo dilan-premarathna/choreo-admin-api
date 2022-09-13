@@ -3,7 +3,7 @@ import choreo_admin_api.dao;
 import ballerina/sql;
 import ballerina/log;
 
-service http:Service /orgs on new http:Listener(9090) {
+service http:Service /org on new http:Listener(9090) {
 
     isolated resource function get subscription/[string orgId]() returns http:Ok|http:InternalServerError|http:NotFound {
 
@@ -27,7 +27,7 @@ service http:Service /orgs on new http:Listener(9090) {
     isolated resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
 
         int|error? status = dao:updateTier(orgId, subscription);
-        if (status is error) {
+        if status is error {
             http:InternalServerError err = {};
             log:printError("Error occured during subscription update for orgUUID: " + orgId);
             return err;

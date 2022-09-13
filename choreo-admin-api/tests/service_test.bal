@@ -8,7 +8,7 @@
 import ballerina/test;
 import ballerina/http;
 
-http:Client testClient = check new ("http://localhost:9090/orgs");
+http:Client testClient = check new ("http://localhost:9090/org");
 
 @test:Mock {
     moduleName: "choreo_admin_api.dao",
@@ -25,39 +25,34 @@ test:MockFunction mockUpdateTier = new ();
 @test:Config {}
 function testGetSubscriptionOfOrgService() returns error? {
     test:when(mockGetOrgSubsctiptionDetails).thenReturn(mockSubscription);
-    http:Response response = check testClient->get("/subscription/1234");
+    http:Response response = check testClient->get("/subscription/12345");
     test:assertEquals(response.statusCode, 200);
 }
 
-// @test:Config {
-//     dependsOn: [testGetSubscriptionOfOrgService]
-// }
-// function testGetSubscriptionOfOrgServiceError() returns error? {
-//     test:when(mockGetOnPremKeySubscription).thenReturn(error(""));
-//     http:Response response = check testClient->get("/subscription/1234");
-//     test:assertEquals(response.statusCode, 500);
-// }
+@test:Config {}
+function testGetSubscriptionOfOrgServiceError() returns error? {
+    test:when(mockGetOrgSubsctiptionDetails).thenReturn(error(""));
+    http:Response response = check testClient->get("/subscription/12345");
+    test:assertEquals(response.statusCode, 500);
+}
 
 @test:Config {}
 function testUpdateOnTierService() returns error? {
     test:when(mockUpdateTier).thenReturn(0);
     test:when(mockGetOrgSubsctiptionDetails).thenReturn(mockSubscription);
-    http:Response response = check testClient->put("/subscription/12345", {
+    http:Response response = check testClient->put("/subscription/123455", {
         "stepQuota": "5000",
         "tierName": "Enterprise"
     });
     test:assertEquals(response.statusCode, 200);
 }
 
-// @test:Config {
-//     dependsOn: [testUpdateOnPremKeyService]
-// }
-// function testUpdateOnPremKeyServiceError() returns error? {
-//     test:when(mockUpdateOnPremKeySubscription).thenReturn(error(""));
-//     http:Response response = check testClient->put("/subscriptions/onprem/12345", {
-//         "plan": "COMMERCIAL",
-//         "startDate": "2022-02-28",
-//         "endDate": "2023-02-25"
-//     });
-//     test:assertEquals(response.statusCode, 500);
-// }
+@test:Config {}
+function testUpdateOnPremKeyServiceError() returns error? {
+    test:when(mockUpdateTier).thenReturn(error(""));
+    http:Response response = check testClient->put("/subscription/12345", {
+        "stepQuota": "5000",
+        "tierName": "Enterprise"
+    });
+    test:assertEquals(response.statusCode, 500);
+}

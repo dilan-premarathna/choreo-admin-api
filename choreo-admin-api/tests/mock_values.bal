@@ -17,5 +17,5 @@ public json mockSubscription = {
     "paidCustomer": isPaidMock,
     "status": statusMock,
     "stepQuota": stepQuotaMock,
-    "TierName": tierNameMock
+    "tierName": tierNameMock
 };
