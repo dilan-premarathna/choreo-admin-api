@@ -2,7 +2,7 @@ import ballerina/sql;
 import ballerinax/java.jdbc;
 import choreo_admin_api.util;
 
-public final jdbc:Client dbClient = check createJdbcClient();
+public final jdbc:Client dbClient = check createSubscriptionClient();
 
 public isolated function getOrgSubsctiptionDetails(string orgID) returns json|error {
 
@@ -52,10 +52,9 @@ public isolated function updateTier(string orgID, UpdateSubscripionTier subscrip
 
 }
 
-function createJdbcClient() returns jdbc:Client|error {
-    jdbc:Client|sql:Error jdbcClient = check new (url = CONN_STR,
+function createSubscriptionClient() returns jdbc:Client|error {
+    jdbc:Client|sql:Error jdbcClient = check new (url = CHOREO_DB_CONN_STR,
         user = CHOREO_DB_USERNAME, password = CHOREO_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
         options = {properties: {"useSSL": true}});
     return jdbcClient;
 }
-
