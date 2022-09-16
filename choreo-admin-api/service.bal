@@ -9,10 +9,22 @@ import ballerina/http;
 import choreo_admin_api.dao;
 import ballerina/sql;
 import ballerina/log;
+import choreo_admin_api.auth;
 
 service http:Service /org on new http:Listener(9090) {
 
-    isolated resource function get subscription/[string orgId]() returns http:Ok|http:InternalServerError|http:NotFound {
+    resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization) returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
+
+        boolean|error isAuthorizd = auth:authorize(authorization);
+        if isAuthorizd is sql:NoRowsError {
+            http:Unauthorized nf = {body: {"Error": "User is not authorized use this API"}};
+            log:printError("User is not authorized use this API", 'error = isAuthorizd);
+            return nf;
+        } else if isAuthorizd is error {
+            http:InternalServerError err = {body: {"Error": "Error occured while authorizing the request"}};
+            log:printError("Error occured while authorizing the request", 'error = isAuthorizd);
+            return err;
+        }
 
         json|error subsDetail = dao:getOrgSubsctiptionDetails(orgId);
         if subsDetail is json {
@@ -31,7 +43,7 @@ service http:Service /org on new http:Listener(9090) {
 
     }
 
-    isolated resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
+    resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
 
         int|error? status = dao:updateTier(orgId, subscription);
         if status is error {

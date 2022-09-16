@@ -58,3 +58,4 @@ function createJdbcClient() returns jdbc:Client|error {
         options = {properties: {"useSSL": true}});
     return jdbcClient;
 }
+
