@@ -1,8 +1,17 @@
 import ballerina/jwt;
 import choreo_admin_api.dao;
 import ballerina/regex;
+import ballerina/http;
 
-configurable string choreoSysOrgID = "bea92b4f-545a-4624-95b0-dde815a06af0";
+final http:ListenerJwtAuthHandler choreoAuthHandler = new ({
+    issuer: choreoJwtIssuer,
+    audience: choreoJwtAudience,
+    signatureConfig: {
+        jwksConfig: {
+            url: choreoJwtJwksUrl
+        }
+    }
+});
 
 isolated function getIdpID(string jwt) returns error|string {
     string token;
@@ -23,6 +32,20 @@ isolated function getIdpID(string jwt) returns error|string {
 
 public isolated function authorize(string jwt) returns boolean|error {
     string idpId = check getIdpID(jwt);
-    boolean|error isAdminUser = dao:checkAdminRole(idpId, choreoSysOrgID);
+    boolean|error isAdminUser = dao:checkAdminRole(idpId, CHOERO_SYS_ORG_ID);
     return isAdminUser;
+}
+
+public isolated function authenticate(string jwt) returns http:Unauthorized? {
+    string authHeader;
+    if jwt.startsWith("Bearer") {
+        authHeader = jwt;
+    } else {
+        authHeader = "Bearer " + jwt;
+    }
+    jwt:Payload|http:Unauthorized authn = choreoAuthHandler.authenticate(authHeader);
+    if authn is http:Unauthorized {
+        return authn;
+    }
+    return;
 }

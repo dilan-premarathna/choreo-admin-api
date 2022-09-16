@@ -13,7 +13,16 @@ import choreo_admin_api.auth;
 
 service http:Service /org on new http:Listener(9090) {
 
-    isolated resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization) returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
+    isolated resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization)
+        returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
+
+        http:Unauthorized? authenticate = auth:authenticate(authorization);
+
+        if authenticate is http:Unauthorized {
+            http:Unauthorized nf = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};
+            log:printError("The provided JWT is invalid. User is not authorized use this API");
+            return nf;
+        }
 
         boolean|error isAuthorizd = auth:authorize(authorization);
         if isAuthorizd is sql:NoRowsError {
@@ -43,14 +52,35 @@ service http:Service /org on new http:Listener(9090) {
 
     }
 
-    isolated resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
+    isolated resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription,
+        @http:Header {name: "x-forwarded-authorization"} string authorization)
+        returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
+
+        http:Unauthorized? authenticate = auth:authenticate(authorization);
+
+        if authenticate is http:Unauthorized {
+            http:Unauthorized nf = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};
+            log:printError("The provided JWT is invalid. User is not authorized use this API");
+            return nf;
+        }
+
+        boolean|error isAuthorizd = auth:authorize(authorization);
+        if isAuthorizd is sql:NoRowsError {
+            http:Unauthorized nf = {body: {"Error": "User is not authorized use this API"}};
+            log:printError("User is not authorized use this API", 'error = isAuthorizd);
+            return nf;
+        } else if isAuthorizd is error {
+            http:InternalServerError err = {body: {"Error": "Error occured while authorizing the request"}};
+            log:printError("Error occured while authorizing the request", 'error = isAuthorizd);
+            return err;
+        }
 
         int|error? status = dao:updateTier(orgId, subscription);
         if status is error {
             http:InternalServerError err = {};
             log:printError("Error occured during subscription update for orgUUID: " + orgId);
             return err;
-        } else if (status is int && status == -1) { // No matching entry found to update
+        } else if (status is int && status == -1) {
             http:NotFound nf = {body: {"Error": "Unable to find subscription entry to mach the given information"}};
             log:printError("Unable to find subscription entry for orgUUID: " + orgId);
             return nf;
@@ -59,9 +89,10 @@ service http:Service /org on new http:Listener(9090) {
             if (updatedSubscription is json) {
                 http:Ok ok = {body: updatedSubscription};
                 return ok;
-            } else { // if the updated entry cannot be retrieved we should return an error
+            } else {
                 http:InternalServerError err = {};
-                log:printError("Error occured during fetching a subscription entry after update operation for orgUUID: ", OrganizationId = orgId, 'error = updatedSubscription);
+                log:printError("Error occured during fetching a subscription entry after update operation for orgUUID: ",
+                    OrganizationId = orgId, 'error = updatedSubscription);
                 return err;
             }
         }
