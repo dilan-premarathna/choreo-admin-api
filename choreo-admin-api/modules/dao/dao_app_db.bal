@@ -1,7 +1,7 @@
 import ballerina/sql;
 import ballerinax/java.jdbc;
 
-final jdbc:Client appDbClient = check createAppDbClient("jdbc:sqlserver://localhost:1433;databaseName=choreo_app_db");
+final jdbc:Client appDbClient = check createAppDbClient();
 
 public isolated function checkAdminRole(string idpID, string orgId) returns boolean|error {
 
@@ -22,7 +22,7 @@ public isolated function checkAdminRole(string idpID, string orgId) returns bool
     }
 }
 
-function createAppDbClient(string connStr) returns jdbc:Client|error {
+function createAppDbClient() returns jdbc:Client|error {
     jdbc:Client|sql:Error jdbcClient = check new (url = CHOREO_APP_DB_CONN_STR,
         user = CHOREO_APP_DB_USERNAME, password = CHOREO_APP_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
         options = {properties: {"useSSL": true}});
