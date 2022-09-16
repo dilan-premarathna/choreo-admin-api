@@ -53,7 +53,7 @@ public isolated function updateTier(string orgID, UpdateSubscripionTier subscrip
 }
 
 function createJdbcClient() returns jdbc:Client|error {
-    jdbc:Client|sql:Error jdbcClient = check new (url = CONN_STR,
+    jdbc:Client|sql:Error jdbcClient = check new (url = CHOREO_DB_CONN_STR,
         user = CHOREO_DB_USERNAME, password = CHOREO_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
         options = {properties: {"useSSL": true}});
     return jdbcClient;

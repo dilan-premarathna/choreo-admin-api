@@ -1,8 +1,6 @@
 import ballerina/sql;
 import ballerinax/java.jdbc;
 
-// import ballerina/log;
-final string ADMIN_ROLE = "admin";
 final jdbc:Client appDbClient = check createAppDbClient("jdbc:sqlserver://localhost:1433;databaseName=choreo_app_db");
 
 public isolated function checkAdminRole(string idpID, string orgId) returns boolean|error {
@@ -15,7 +13,6 @@ public isolated function checkAdminRole(string idpID, string orgId) returns bool
         [role].handle =${ADMIN_ROLE}`;
     string|sql:Error roleMemberOrgMapping;
 
-    //io:println(checkAdminQuery);
     roleMemberOrgMapping = appDbClient->queryRow(checkAdminQuery);
 
     if roleMemberOrgMapping is string {
@@ -26,8 +23,8 @@ public isolated function checkAdminRole(string idpID, string orgId) returns bool
 }
 
 function createAppDbClient(string connStr) returns jdbc:Client|error {
-    jdbc:Client|sql:Error jdbcClient = check new (url = connStr,
-        user = "SA", password = "Admin@123", connectionPool = {maxOpenConnections: 50},
+    jdbc:Client|sql:Error jdbcClient = check new (url = CHOREO_APP_DB_CONN_STR,
+        user = CHOREO_APP_DB_USERNAME, password = CHOREO_APP_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
         options = {properties: {"useSSL": true}});
     return jdbcClient;
 }
