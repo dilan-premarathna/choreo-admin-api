@@ -21,7 +21,7 @@ isolated function getIdpID(string jwt) returns error|string {
 
 }
 
-public function authorize(string jwt) returns boolean|error {
+public isolated function authorize(string jwt) returns boolean|error {
     string idpId = check getIdpID(jwt);
     boolean|error isAdminUser = dao:checkAdminRole(idpId, choreoSysOrgID);
     return isAdminUser;

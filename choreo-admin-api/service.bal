@@ -13,7 +13,7 @@ import choreo_admin_api.auth;
 
 service http:Service /org on new http:Listener(9090) {
 
-    resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization) returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
+    isolated resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization) returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
 
         boolean|error isAuthorizd = auth:authorize(authorization);
         if isAuthorizd is sql:NoRowsError {
@@ -43,7 +43,7 @@ service http:Service /org on new http:Listener(9090) {
 
     }
 
-    resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
+    isolated resource function put subscription/[string orgId](@http:Payload dao:UpdateSubscripionTier subscription) returns http:Ok|http:InternalServerError|http:NotFound {
 
         int|error? status = dao:updateTier(orgId, subscription);
         if status is error {
