@@ -8,11 +8,20 @@
 import ballerina/test;
 import ballerinax/java.jdbc;
 import ballerina/sql;
+import choreo_admin_api.configs;
 
 @test:Mock {
     functionName: "createJdbcClient"
 }
 function getMockClient() returns jdbc:Client|sql:Error {
+
+    return test:mock(jdbc:Client);
+}
+
+@test:Mock {
+    functionName: "createAppDbClient"
+}
+function getAppDbClient() returns jdbc:Client|sql:Error {
 
     return test:mock(jdbc:Client);
 }
@@ -36,4 +45,12 @@ function testUpdateTier() {
     int|error subsDetail = updateTier("3ac78213-9cd9-b96a-d98cbb16d4cc", subscription);
     test:assertEquals(subsDetail, 0);
 
+}
+
+@test:Config {}
+function testCheckAdminRole() {
+
+    test:prepare(appDbClient).when("queryRow").thenReturn("1002");
+    boolean|error isAdminUser = checkAdminRole("175cfc46-b124-471c-b8ca-f0fd0a8e87bd", configs:CHOERO_SYS_ORG_UUID);
+    test:assertEquals(isAdminUser, true);
 }

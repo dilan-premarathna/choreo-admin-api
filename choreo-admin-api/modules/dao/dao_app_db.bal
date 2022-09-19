@@ -7,6 +7,7 @@
 
 import ballerina/sql;
 import ballerinax/java.jdbc;
+import choreo_admin_api.configs;
 
 final jdbc:Client appDbClient = check createAppDbClient();
 
@@ -17,7 +18,7 @@ public isolated function checkAdminRole(string idpID, string orgId) returns bool
         INNER JOIN [role] ON [role].id = [role_member_mapping].role_id
         INNER JOIN [organization] ON [role].organization_id = [organization].id 
         WHERE [user].idp_id =${idpID} AND [organization].uuid=${orgId} AND
-        [role].handle =${ADMIN_ROLE}`;
+        [role].handle =${configs:ADMIN_ROLE}`;
     string|sql:Error roleMemberOrgMapping;
 
     roleMemberOrgMapping = appDbClient->queryRow(checkAdminQuery);
@@ -30,8 +31,8 @@ public isolated function checkAdminRole(string idpID, string orgId) returns bool
 }
 
 function createAppDbClient() returns jdbc:Client|error {
-    jdbc:Client|sql:Error jdbcClient = check new (url = CHOREO_APP_DB_CONN_STR,
-        user = CHOREO_APP_DB_USERNAME, password = CHOREO_APP_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
+    jdbc:Client|sql:Error jdbcClient = check new (url = configs:CHOREO_APP_DB_CONN_STR,
+        user = configs:CHOREO_APP_DB_USERNAME, password = configs:CHOREO_APP_DB_PASSWORD, connectionPool = {maxOpenConnections: 50},
         options = {properties: {"useSSL": true}});
     return jdbcClient;
 }

@@ -9,6 +9,7 @@ import ballerina/http;
 import choreo_admin_api.dao;
 import ballerina/sql;
 import ballerina/log;
+import ballerina/jwt;
 import choreo_admin_api.auth;
 
 service http:Service /org on new http:Listener(9090) {
@@ -16,7 +17,7 @@ service http:Service /org on new http:Listener(9090) {
     isolated resource function get subscription/[string orgId](@http:Header {name: "x-forwarded-authorization"} string authorization)
         returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
 
-        http:Unauthorized? authenticate = auth:authenticate(authorization);
+        http:Unauthorized|jwt:Payload authenticate = auth:authenticate(authorization);
 
         if authenticate is http:Unauthorized {
             http:Unauthorized err = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};
@@ -56,7 +57,7 @@ service http:Service /org on new http:Listener(9090) {
         @http:Header {name: "x-forwarded-authorization"} string authorization)
         returns http:Ok|http:InternalServerError|http:NotFound|http:Unauthorized {
 
-        http:Unauthorized? authenticate = auth:authenticate(authorization);
+        http:Unauthorized|jwt:Payload authenticate = auth:authenticate(authorization);
 
         if authenticate is http:Unauthorized {
             http:Unauthorized nf = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};

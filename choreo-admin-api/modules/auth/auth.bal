@@ -9,13 +9,14 @@ import ballerina/jwt;
 import choreo_admin_api.dao;
 import ballerina/regex;
 import ballerina/http;
+import choreo_admin_api.configs;
 
 final http:ListenerJwtAuthHandler choreoAuthHandler = new ({
-    issuer: choreoJwtIssuer,
-    audience: choreoJwtAudience,
+    issuer: configs:choreoJwtIssuer,
+    audience: configs:choreoJwtAudience,
     signatureConfig: {
         jwksConfig: {
-            url: choreoJwtJwksUrl
+            url: configs:choreoJwtJwksUrl
         }
     }
 });
@@ -39,20 +40,19 @@ isolated function getIdpID(string jwt) returns error|string {
 
 public isolated function authorize(string jwt) returns boolean|error {
     string idpId = check getIdpID(jwt);
-    boolean|error isAdminUser = dao:checkAdminRole(idpId, CHOERO_SYS_ORG_ID);
+    boolean|error isAdminUser = dao:checkAdminRole(idpId, configs:CHOERO_SYS_ORG_UUID);
+
     return isAdminUser;
 }
 
-public isolated function authenticate(string jwt) returns http:Unauthorized? {
+public isolated function authenticate(string jwt) returns jwt:Payload|http:Unauthorized {
     string authHeader;
     if jwt.startsWith("Bearer") {
         authHeader = jwt;
     } else {
         authHeader = "Bearer " + jwt;
     }
-    jwt:Payload|http:Unauthorized authn = choreoAuthHandler.authenticate(authHeader);
-    if authn is http:Unauthorized {
-        return authn;
-    }
-    return;
+    jwt:Payload|http:Unauthorized auth = choreoAuthHandler.authenticate(authHeader);
+
+    return auth;
 }

@@ -6,18 +6,24 @@
 // You may not alter or remove any copyright or other notice from copies of this content.
 
 import ballerina/test;
-import ballerina/http;
 
-http:Client testHealthClient = check new ("http://localhost:9093");
+@test:Mock {
+    moduleName: "choreo_admin_api.dao",
+    functionName: "checkAdminRole"
+}
+test:MockFunction mockCheckAdminRole = new ();
 
 @test:Config {}
-function testLiveness() returns error? {
-    http:Response response = check testHealthClient->get("/liveness");
-    test:assertEquals(response.statusCode, http:STATUS_OK);
+function testGetSubscriptionOfOrgService() returns error? {
+    string idpID = check getIdpID(mockJWT);
+    test:assertEquals(mockIDPID, idpID);
 }
 
 @test:Config {}
-function testReadiness() returns error? {
-    http:Response response = check testHealthClient->get("/readiness");
-    test:assertEquals(response.statusCode, http:STATUS_OK);
+function testAuthorize() {
+
+    test:when(mockCheckAdminRole).thenReturn(true);
+    boolean|error isAdmin = authorize(mockJWT);
+    test:assertEquals(isAdmin, true);
 }
+
