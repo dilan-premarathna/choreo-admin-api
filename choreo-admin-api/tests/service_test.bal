@@ -26,14 +26,14 @@ test:MockFunction mockUpdateTier = new ();
 function testGetSubscriptionOfOrgService() returns error? {
     test:when(mockGetOrgSubsctiptionDetails).thenReturn(mockSubscription);
     http:Response response = check testClient->get("/subscription/12345");
-    test:assertEquals(response.statusCode, 200);
+    test:assertEquals(response.statusCode, http:STATUS_OK);
 }
 
 @test:Config {}
 function testGetSubscriptionOfOrgServiceError() returns error? {
     test:when(mockGetOrgSubsctiptionDetails).thenReturn(error(""));
     http:Response response = check testClient->get("/subscription/12345");
-    test:assertEquals(response.statusCode, 500);
+    test:assertEquals(response.statusCode, http:STATUS_INTERNAL_SERVER_ERROR);
 }
 
 @test:Config {}
@@ -44,7 +44,7 @@ function testUpdateOnTierService() returns error? {
         "stepQuota": "5000",
         "tierName": "Enterprise"
     });
-    test:assertEquals(response.statusCode, 200);
+    test:assertEquals(response.statusCode, http:STATUS_OK);
 }
 
 @test:Config {}
@@ -54,5 +54,5 @@ function testUpdateOnPremKeyServiceError() returns error? {
         "stepQuota": "5000",
         "tierName": "Enterprise"
     });
-    test:assertEquals(response.statusCode, 500);
+    test:assertEquals(response.statusCode, http:STATUS_INTERNAL_SERVER_ERROR);
 }

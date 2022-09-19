@@ -6,12 +6,21 @@
 // You may not alter or remove any copyright or other notice from copies of this content.
 
 import ballerina/http;
+import choreo_admin_api.health;
 
-# Public Health check endpoint
-service /adminAPI on new http:Listener(9093) {
+service / on new http:Listener(9093) {
 
-    resource function get healthz() returns json {
+    isolated resource function get liveness() returns json {
         return {status: "OK"};
+    }
 
+    isolated resource function get readiness() returns json {
+        http:Response res = new;
+        res.statusCode = health:getOverallHealthStatus();
+        if (res.statusCode == http:STATUS_OK) {
+            return {status: "OK"};
+        } else {
+            return {status: "ERROR"};
+        }
     }
 }

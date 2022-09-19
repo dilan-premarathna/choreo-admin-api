@@ -343,6 +343,7 @@ modules = [
 	{org = "choreo", packageName = "choreo_admin_api", moduleName = "choreo_admin_api"},
 	{org = "choreo", packageName = "choreo_admin_api", moduleName = "choreo_admin_api.auth"},
 	{org = "choreo", packageName = "choreo_admin_api", moduleName = "choreo_admin_api.dao"},
+	{org = "choreo", packageName = "choreo_admin_api", moduleName = "choreo_admin_api.health"},
 	{org = "choreo", packageName = "choreo_admin_api", moduleName = "choreo_admin_api.util"}
 ]
 

@@ -19,16 +19,16 @@ service http:Service /org on new http:Listener(9090) {
         http:Unauthorized? authenticate = auth:authenticate(authorization);
 
         if authenticate is http:Unauthorized {
-            http:Unauthorized nf = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};
+            http:Unauthorized err = {body: {"Error": "The provided JWT is invalid. User is not authorized use this API"}};
             log:printError("The provided JWT is invalid. User is not authorized use this API");
-            return nf;
+            return err;
         }
 
         boolean|error isAuthorizd = auth:authorize(authorization);
         if isAuthorizd is sql:NoRowsError {
-            http:Unauthorized nf = {body: {"Error": "User is not authorized use this API"}};
+            http:Unauthorized err = {body: {"Error": "User is not authorized use this API"}};
             log:printError("User is not authorized use this API", 'error = isAuthorizd);
-            return nf;
+            return err;
         } else if isAuthorizd is error {
             http:InternalServerError err = {body: {"Error": "Error occured while authorizing the request"}};
             log:printError("Error occured while authorizing the request", 'error = isAuthorizd);

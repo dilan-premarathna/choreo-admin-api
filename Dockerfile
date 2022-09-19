@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------------
 #
-# Copyright (c) 2021, WSO2 Inc. (http://www.wso2.com). All Rights Reserved.
+# Copyright (c) 2022, WSO2 Inc. (http://www.wso2.com). All Rights Reserved.
 #
 # This software is the property of WSO2 Inc. and its suppliers, if any.
 # Dissemination of any information or reproduction of any material contained
@@ -9,12 +9,12 @@
 #
 # --------------------------------------------------------------------------------------
 
-FROM ballerina/ballerina:2201.1.1 AS ballerina-builder
+FROM ballerina/ballerina:2201.0.5 AS ballerina-builder
 USER root
 ADD . /src
 WORKDIR /src
 
-RUN bal build 
+RUN bal build choreo-admin-api
 
 FROM adoptopenjdk/openjdk11:jre-11.0.15_10-alpine
 WORKDIR /home/ballerina
@@ -27,13 +27,7 @@ RUN addgroup troupe \
     && chown -R ballerina:troupe /opt/java/openjdk/bin/java \
     && rm -rf /var/cache/apk/*
 
-RUN apk add -u busybox
-
-RUN apk add --update libcrypto1.1==1.1.1q-r0 \
-    && apk add --update libssl1.1==1.1.1q-r0 \
-    && apk add --update zlib==1.2.12-r3
-
-COPY --from=ballerina-builder /src/target/bin/choreo_admin_api.jar /home/ballerina
+COPY --from=ballerina-builder /src/choreo-admin-api/target/bin/choreo_admin_api.jar /home/ballerina
 RUN chown ballerina /home/ballerina/choreo_admin_api.jar
 
 EXPOSE 9090
