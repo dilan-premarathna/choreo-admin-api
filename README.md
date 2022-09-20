@@ -9,7 +9,7 @@ Choreo Admin API provides the admin functionalities of Choreo
 This section explains the required steps for running and testing this service locally. First clone this repository and get into the root directory. Here onwards the root directory will be referred as `CHOREO_ADMIN_API_HOME`.
 
 ### Database Initialization
-1. Download the [`choreo_app_db`](https://github.com/wso2-enterprise/choreo-control-plane/blob/main/databases/scripts/choreo_app_db_mssql.sql) and [`choreo_subscriptions_db`](https://github.com/wso2-enterprise/choreo-control-plane/blob/main/databases/scripts/choreo_app_db_mssql.sql) database schemas.
+1. Download the [`choreo_app_db`](https://github.com/wso2-enterprise/choreo-control-plane/blob/main/databases/scripts/choreo_app_db_mssql.sql) and [`choreo_subscriptions_db`](https://github.com/wso2-enterprise/choreo-control-plane/blob/main/databases/scripts/choreo_subscriptions_db_mssql.sql) database schemas.
 2. Then replace the `create user` section at the top of the file with the following code segment in `choreo_app_db` and `choreo_subscriptions_db` respectively.
 ```
 IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'choreo_app_db')
@@ -60,8 +60,10 @@ INSERT INTO choreo_subscriptions_db.dbo.tier (id,name,description,is_paid,create
 GO
 
 INSERT INTO choreo_subscriptions_db.dbo.subscription (id,org_id,org_handle,tier_id,billing_date,status,is_paid,step_quota) VALUES
-	 (N'0000060f-569d-4394-b689-4624b9a31b5b',N'0000',N'jhondoe',N'01ebea3a-7735-10be-b3c0-ba95f991e877',1627639797657,N'ACTIVE',0,5000),
-	 (N'00151c87-07c0-48b5-ad68-103b1f6f1a90',N'1111',N'jackbob',N'01ec1f84-ce3d-122e-ac9b-f10c95fd72da',1627639797657,N'ACTIVE',1,1000000);
+	 (N'0000060f-569d-4394-b689-4624b9a31b5b',N'73aaf255-ea0e-4b53-b91c-ff2d2a1bd8cb',N'jhondoe',N'01ebea3a-7735-10be-b3c0-ba95f991e877',1627639797657,N'ACTIVE',0,5000),
+	 (N'00151c87-07c0-48b5-ad68-103b1f6f1a90',N'96c958c9-1205-487d-a32a-c4dd14d0c898',N'jackbob',N'01ec1f84-ce3d-122e-ac9b-f10c95fd72da',1627639797657,N'ACTIVE',1,1000000);
+
+GO
 ```
 
 ### Running unit Tests
@@ -93,7 +95,7 @@ java -jar <path to jar file>
 ```
 #### Test
 
-In order to invoke the service you will need to obtain a jwt token. You can copy a token from a browser request. 
+In order to invoke the service you will need to obtain a valid jwt token. For this login to the Choero Console, open the browser developer console and check the network trace. From the network trace you can obtain a token from a browser request. 
 
 - Following request will return the subscription details of the organized that was added in step 5 above. 
 ```
